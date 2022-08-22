@@ -19,11 +19,12 @@ export const formularyAnswersValidator = Joi.object({
   formularyId: Joi.string().required(),
   fieldId: Joi.string().required(),
   activityId: Joi.string().required(),
-  file: Joi.object({
+  files: Joi.array().items({
+    id: Joi.string().required(),
     filename: Joi.string().required(),
     content: Joi.string().required(),
-  }).allow(null),
-  answers: Joi.array().items({
+  }),
+  answers: Joi.array().items({    
     semester: Joi.string().required(),
     quantity: Joi.number().required(),
   }),

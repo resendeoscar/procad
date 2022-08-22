@@ -1,25 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { 
-    Button, 
-    Container, 
-    IconButton, 
-    Typography, 
-    Modal, 
-    TextField ,
+import {
+    Button,
+    Container,
+    IconButton,
+    Typography,
+    Modal,
+    TextField,
     Input
 } from '@material-ui/core';
 import PaperContainer from '../PaperContainer';
 import { HighlightOff, CloudUpload } from "@material-ui/icons"
 import { GlobalStateContext } from '../../store';
 import moment from 'moment';
+import Upload from '../Upload';
+import FileList from '../FileList';
+import { uniqueId } from 'lodash';
+import filesize from 'filesize';
 
 const headerContainer = {
     display: 'flex',
 }
 
-const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
+const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
-    const [state, ] = useContext(GlobalStateContext);
+    const [state,] = useContext(GlobalStateContext);
 
     const [semestre1, setSemestre1] = useState(0);
     const [semestre2, setSemestre2] = useState(0);
@@ -43,15 +47,60 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
         period4: `${dates.p4.year()}.${dates.p4.month() < 7 ? 1 : 2}`,
     }
 
+    const [upFiles, setUploadedFiles] = useState([]);
+
+
+    const handleUpload = async (files) => {
+        let list = []
+        let listAux = []
+
+        var arrayLength = files.length;
+        for (var i = 0; i < arrayLength; i++) {
+            listAux.push({ 
+                id: uniqueId(), 
+                name: files[i].name, 
+                readableSize: filesize(files[i].size),
+                content: await toBase64(files[i]) });
+        }
+
+        /*const uploadedFiles = files.map(async file => ({
+            file,
+            id: uniqueId(),
+            name: file.name,
+            readableSize: filesize(file.size),                        
+            url: null,
+            //result: await toBase64(file),
+        }))*/        
+
+        list = upFiles.concat(listAux);
+        setUploadedFiles(list);
+    };
+
+    const handleDeleteFile = id => {
+        setUploadedFiles(upFiles.filter(file => file.id !== id))
+    }
+
 
     useEffect(() => {
         let { from = '2021-10-4', to = '2022-10-4' } = (state.formulary.data || {}).dbFormulary || {};
-        let dto = ((atividade || {}).answers || {})
-        
-        if(dto.filename) {
-            setArquivoPDF({filename: dto.filename, content: dto.content})
+
+        let dtoFiles = ((atividade || {}).files || {})
+
+        if (dtoFiles) {
+            //setArquivoPDF({ filename: dtoFiles.filename, content: dtoFiles.content })  
+            setUploadedFiles([]);
+            let list = []
+
+            var arrayLength = dtoFiles.length;
+            for (var i = 0; i < arrayLength; i++) {
+                list.push({ id: dtoFiles[i].id, name: dtoFiles[i].filename, content: dtoFiles[i].content, });
+            }
+
+            setUploadedFiles(list);
         }
-        
+
+        let dto = ((atividade || {}).answers || {})
+
         let answer = (dto || {}).answer || [];
 
         const inter = {
@@ -62,30 +111,27 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
         }
 
         let models = [
-            {period: inter.period1, cb: setSemestre1},
-            {period: inter.period2, cb: setSemestre2},
-            {period: inter.period3, cb: setSemestre3},
-            {period: inter.period4, cb: setSemestre4},
+            { period: inter.period1, cb: setSemestre1 },
+            { period: inter.period2, cb: setSemestre2 },
+            { period: inter.period3, cb: setSemestre3 },
+            { period: inter.period4, cb: setSemestre4 },
         ]
 
         models.forEach(m => {
             let exist = answer.find(ans => ans.semester === m.period)
-            if(exist) m.cb(exist.quantity)
+            if (exist) m.cb(exist.quantity)
         })
     }, [atividade])
 
-
-    
-
     const getTotal = () => {
         const sum = semestre1 + semestre2 + semestre3 + semestre4;
-        let dto = sum/atividade.peso;
+        let dto = sum / atividade.peso;
         return (dto * atividade.pontos).toFixed(2);
     }
 
     const handleSemestreInput = (value, semestre) => {
         let dto = Number(value);
-        if(Number.isNaN(dto) || dto < 0){
+        if (Number.isNaN(dto) || dto < 0) {
             dto = 0;
         }
         semestre(dto);
@@ -97,6 +143,7 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
         setSemestre3(0);
         setSemestre4(0);
         setArquivoPDF({})
+        setUploadedFiles([])
 
         handleClose()
     }
@@ -104,7 +151,7 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
     const handleFileUpload = async (event) => {
         let filename = event.target.files[0].name;
         let result = await toBase64(event.target.files[0]);
-        setArquivoPDF({filename, content: result})
+        setArquivoPDF({ filename, content: result })
     }
 
     const toBase64 = fileObj => new Promise((resolve, reject) => {
@@ -115,16 +162,23 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
     });
 
     const handleSubmit = () => {
-        
+
 
         let answers = (atividade || {}).answers || {}
+
+        let arquivos = []
+
+        var arrayLength = upFiles.length;
+        for (var i = 0; i < arrayLength; i++) {
+            arquivos.push({ id: upFiles[i].id, filename: upFiles[i].name, content: upFiles[i].content });
+        }
 
         const formDto = {
             id: answers.id || null,
             formularyId: null,
             fieldId: null,
             activityId: atividade.id,
-            file: arquivoPDF,
+            files: arquivos,
             answers: [
                 {
                     semester: intersticio.period1,
@@ -142,9 +196,9 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
                     semester: intersticio.period4,
                     quantity: semestre4
                 },
-                ]
-            }
-        
+            ]
+        }
+
         onSubmit(formDto).then(r => {
             onClose();
         });
@@ -152,154 +206,161 @@ const AtividadeModal = ({open, handleClose, atividade, onSubmit}) => {
 
     return (
         <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+            open={open}
+            onClose={onClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
         >
             <Container>
-                <div style={{marginTop: '10%'}}>
-                <PaperContainer>
+                <div style={{ marginTop: '10%' }}>
+                    <PaperContainer>
 
-                    <div style={headerContainer}>
-                        <div style={{flex: 1}}>
-                            <Typography id="modal-modal-title" variant="h6" component="h3">
-                            {atividade.atividade}
-                            </Typography>
-                        </div>
-                        
-                        <div style={{width: 'maxContent', marginLeft: 8}}>
-                            <IconButton 
-                                onClick={onClose}
-                                aria-label="close" 
-                                style={{padding: 6}} 
-                                color="secondary"
-                            >
-                                <HighlightOff />
-                            </IconButton>
-                        </div>
-                    </div>
-                    <div style={{marginTop: 36}}>
-                        
-                        <div style={{display: 'flex'}}>
-                            <div style={{flex: 2}}>
-                                <Typography color="textSecondary" variant="body2">
-                                    Quantidade durante o período: {intersticio.period1} a {intersticio.period4}
+                        <div style={headerContainer}>
+                            <div style={{ flex: 1 }}>
+                                <Typography id="modal-modal-title" variant="h6" component="h3">
+                                    {atividade.atividade}
                                 </Typography>
-                                <div style={{display: 'flex', gap: 8, marginTop: 8}}>
-                                    <TextField 
-                                        variant="outlined" 
-                                        label={intersticio.period1} 
-                                        type="number" 
-                                        size="small"
-                                        value={semestre1}
-                                        onChange={(event) => handleSemestreInput(event.target.value, setSemestre1)}/>
-
-                                    <TextField 
-                                        variant="outlined" 
-                                        label={intersticio.period2} 
-                                        type="number" 
-                                        size="small"
-                                        value={semestre2}
-                                        onChange={(event) => handleSemestreInput(event.target.value, setSemestre2)}/>
-
-                                    <TextField 
-                                        variant="outlined" 
-                                        label={intersticio.period3} 
-                                        type="number" 
-                                        size="small"
-                                        value={semestre3}
-                                        onChange={(event) => handleSemestreInput(event.target.value, setSemestre3)}/>
-
-                                    <TextField 
-                                        variant="outlined" 
-                                        label={intersticio.period4} 
-                                        type="number" 
-                                        size="small"
-                                        value={semestre4}
-                                        onChange={(event) => handleSemestreInput(event.target.value, setSemestre4)}/>
-
-                                </div>
                             </div>
-                        
-                            <div style={{flex: 1}}>
-                                <div style={{margin: '0 auto', width: 'max-content'}}>
-                                    <Typography color="textSecondary" variant="body2">Referência</Typography>
-                                    <div style={{marginTop: 8, textAlign: 'center'}}>
-                                        <small>{atividade.label}</small>
+
+                            <div style={{ width: 'maxContent', marginLeft: 8 }}>
+                                <IconButton
+                                    onClick={onClose}
+                                    aria-label="close"
+                                    style={{ padding: 6 }}
+                                    color="secondary"
+                                >
+                                    <HighlightOff />
+                                </IconButton>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: 36 }}>
+
+                            <div style={{ display: 'flex' }}>
+                                <div style={{ flex: 4 }}>
+                                    <Typography color="textSecondary" variant="body2">
+                                        Quantidade durante o período: {intersticio.period1} a {intersticio.period4}
+                                    </Typography>
+                                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                        <TextField
+                                            variant="outlined"
+                                            label={intersticio.period1}
+                                            type="number"
+                                            size="small"
+                                            value={semestre1}
+                                            onChange={(event) => handleSemestreInput(event.target.value, setSemestre1)} />
+
+                                        <TextField
+                                            variant="outlined"
+                                            label={intersticio.period2}
+                                            type="number"
+                                            size="small"
+                                            value={semestre2}
+                                            onChange={(event) => handleSemestreInput(event.target.value, setSemestre2)} />
+
+                                        <TextField
+                                            variant="outlined"
+                                            label={intersticio.period3}
+                                            type="number"
+                                            size="small"
+                                            value={semestre3}
+                                            onChange={(event) => handleSemestreInput(event.target.value, setSemestre3)} />
+
+                                        <TextField
+                                            variant="outlined"
+                                            label={intersticio.period4}
+                                            type="number"
+                                            size="small"
+                                            value={semestre4}
+                                            onChange={(event) => handleSemestreInput(event.target.value, setSemestre4)} />
+
+                                    </div>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ marginLeft: '25px' }}>
+                                        <Typography color="textSecondary" variant="body2">Referência</Typography>
+                                        <div style={{ textAlign: 'left', marginTop: '15px' }}>
+                                            <small>{atividade.label}</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style={{ flex: 1, textAlign: 'center' }}>
+                                    <Typography color="textSecondary" variant="body2">Total de pontos</Typography>
+                                    <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                        <Typography variant="h4" color="primary">{getTotal()}</Typography>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/*
+                            <div style={{ marginTop: 24, display: 'flex', gap: 36 }}>
+                                <div>
+
+                                    <Typography color="textSecondary" variant="body2">Comprovante de atividades</Typography>
+
+                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
+                                        <label
+                                            htmlFor="comprovante-atividade"
+                                            style={{
+                                                borderRadius: 4,
+                                                display: 'inline-block',
+                                                textAlign: 'center',
+                                            }}>
+                                            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+
+                                                <div>
+                                                    <input
+                                                        type="file"
+                                                        id="comprovante-atividade"
+                                                        accept="application/pdf"
+                                                        placeholder="Anexar PDF"
+                                                        onChange={handleFileUpload}
+                                                        style={{ display: 'none' }}
+                                                    />
+
+                                                    <Button variant="contained" component="span" size="small" color="primary">
+                                                        Anexar PDF
+                                                        <CloudUpload style={{ marginLeft: "10px" }} />
+                                                    </Button>
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </label>
+
+
+                                        <div style={{ marginLeft: '20px' }}>
+                                            {arquivoPDF.content && <a download={arquivoPDF.filename || "comprovante.pdf"} href={arquivoPDF.content} title='Fazer download'>
+                                                <Typography color="textSecondary">
+                                                    {arquivoPDF.filename}
+                                                </Typography>
+                                            </a>}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            */}
 
-                        </div>
-                        
-                        <div style={{marginTop: 24, display: 'flex', gap: 36}}>
+                            <div style={{ marginTop: '20px', marginBottom: '15px'}}>
+                                <div style={{ marginBottom: '15px' }}>
+                                    <Typography color="textSecondary" variant="body2">Comprovante das atividades</Typography>
+                                </div>
+                                <Upload onUpload={handleUpload} />
+                                {!!upFiles.length && (
+                                    <FileList files={upFiles} onDelete={handleDeleteFile} />
+                                )}
+                            </div>
+
                             <div>
-
-                                <Typography color="textSecondary" variant="body2">Comprovante de atividades</Typography>
-                                
-                                <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
-                                <label 
-                                    htmlFor="comprovante-atividade" 
-                                    style={{
-                                        borderRadius: 4, 
-                                        display: 'inline-block', 
-                                        textAlign: 'center',
-                                    }}>
-                                    <div style={{display: 'flex', gap: 10, alignItems: 'center'}}>
-                                    
-                                    <div>
-                                        <input                                                                                         
-                                            type="file"
-                                            id="comprovante-atividade"                                             
-                                            accept="application/pdf"
-                                            placeholder="Anexar PDF"
-                                            onChange={handleFileUpload}
-                                            style={{display: 'none'}}
-                                        />
-
-                                        <Button variant="contained" component="span" size="small" color="primary">
-                                            Anexar PDF
-                                            <CloudUpload style={{marginLeft: "10px"}}/>
-                                        </Button>
-                                    </div>
-                                    
-                                    
-                                    
-                                    
-
-                                    </div>
-
-                                    
-                                    
-                                </label>
-
-                                <div style={{marginLeft: '20px'}}>
-                                    {arquivoPDF.content && <a download={arquivoPDF.filename || "comprovante.pdf"} href={arquivoPDF.content} title='Fazer download'>
-                                        <Typography color="textSecondary">
-                                            {arquivoPDF.filename}
-                                        </Typography>
-                                    </a>}
-                                </div>
-                                </div>
-
-                                
-                            </div>
-                                    
-                            <div>
-                                <Typography color="textSecondary" variant="body2">Total de pontos</Typography>
-                                <div style={{textAlign: 'center'}}>
-                                    <Typography variant="h4" color="primary">{getTotal()}</Typography>
-                                </div>
+                                <Button variant="contained" color="primary" style={{ marginLeft: 'auto', display: 'block' }} onClick={handleSubmit}>Salvar</Button>
                             </div>
 
                         </div>
-
-                        <div>
-                            <Button variant="contained" color="primary" style={{marginLeft: 'auto', display: 'block'}} onClick={handleSubmit}>Salvar</Button>
-                        </div>
-                    </div>
-                </PaperContainer>
+                    </PaperContainer>
                 </div>
             </Container>
         </Modal>

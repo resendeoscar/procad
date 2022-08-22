@@ -2,10 +2,12 @@ import React, { useContext, useState } from 'react'
 import { GlobalStateContext } from '../../store';
 import moment from 'moment';
 import './style.css';
+import { useHistory } from "react-router-dom";
 
 export default function GerarRelatorio({solicitacaoId}) {
 
     const [state, dispatch] = useContext(GlobalStateContext);
+    const history = useHistory();
 
     const [user, setUser] = useState({
 		firstName: localStorage.getItem("firstName") || "User",
@@ -25,7 +27,8 @@ export default function GerarRelatorio({solicitacaoId}) {
         period2: `${dates.p2.year()}.${dates.p2.month() < 7 ? 1 : 2}`,
         period3: `${dates.p3.year()}.${dates.p3.month() < 7 ? 1 : 2}`,
         period4: `${dates.p4.year()}.${dates.p4.month() < 7 ? 1 : 2}`,
-    }
+    
+    }    
 
     const printPage = () => {
         // var conteudo = document.getElementById('relatorio-content').innerHTML,
@@ -36,6 +39,10 @@ export default function GerarRelatorio({solicitacaoId}) {
         // tela_impressao.window.close();
         window.print();
     }
+
+    const goBack = () => {
+		history.goBack()
+	}
 
     function getRelatorio() {
         let relatorio = [];
@@ -113,8 +120,7 @@ export default function GerarRelatorio({solicitacaoId}) {
                     atividades: result[key]
                 })
             }
-        }
-        console.log(relatorio)        
+        }        
         return relatorio;
     }
 
@@ -122,7 +128,9 @@ export default function GerarRelatorio({solicitacaoId}) {
 
     return (
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
+            
             <div className="gerar-relatorio-action">
+                <button className="btn-gerar-relatorio" onClick={goBack}>Voltar</button>
                 <button className="btn-gerar-relatorio" onClick={printPage}>Imprimir Relatório</button>
             </div>
 

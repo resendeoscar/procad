@@ -8,6 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link, useHistory } from "react-router-dom";
+import { IconButton } from '@material-ui/core'
+import { Delete } from '@material-ui/icons';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,9 +31,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ProgressTable({list}) {
-
-
+export default function ProgressTable({ list, onDeleteClick }) {    
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -39,16 +39,22 @@ export default function ProgressTable({list}) {
           <TableRow>
             <StyledTableCell align="left">Atividade</StyledTableCell>
             <StyledTableCell align="center">Pontuação</StyledTableCell>
+            <StyledTableCell align="center">Ações</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {list.map((row, idx) => (
-            
-              <StyledTableRow key={idx} >
-                <StyledTableCell align="left">{row.atividade}</StyledTableCell>
-                <StyledTableCell align="center">{row.points}</StyledTableCell>
-              </StyledTableRow>
-            
+
+            <StyledTableRow key={idx} >
+              <StyledTableCell align="left">{row.atividade}</StyledTableCell>
+              <StyledTableCell align="center">{row.points}</StyledTableCell>
+              <StyledTableCell align="center">
+                <IconButton edge="start" aria-label="Deletar" onClick={() => onDeleteClick(row.formularyAnswerId)}>
+                  <Delete />
+                </IconButton>
+              </StyledTableCell>
+            </StyledTableRow>
+
           ))}
         </TableBody>
       </Table>

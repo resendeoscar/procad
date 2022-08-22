@@ -1,6 +1,7 @@
 import { Comission, FormularyAnswer, FormularyType } from "..";
 
-export interface File {
+export interface File {  
+  id: string | undefined;
   filename: string;
   content: string;
 }
@@ -18,6 +19,6 @@ export interface FormularyAnswerInput {
   formularyId: string;
   fieldId: string;
   activityId: string;
-  file: File | null;
+  files: File[];
   answers: FormularyAnswer[];
 }

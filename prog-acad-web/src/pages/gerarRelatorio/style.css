@@ -13,6 +13,10 @@
   padding: 16px 0;
 }
 
+.btn-gerar-relatorio {
+  margin-right: 10px;
+}
+
 @media print {
     body * {
       visibility: hidden;

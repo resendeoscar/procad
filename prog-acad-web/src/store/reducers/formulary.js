@@ -97,8 +97,7 @@ export function getFormulary(formId,dispatch) {
 		})
 }
 
-export function updateFormAnswer(form, dispatch) {
-
+export function updateFormAnswer(form, dispatch) {	
 	setLoading(true, dispatch);
 	return axios.put(`/formularyAnswer`, form)
 		.then(({data}) => {
@@ -146,4 +145,36 @@ export function closeFormulary(form, dispatch) {
 			setLoading(false, dispatch);
 		});
 	
+}
+
+export async function deleteFormulary(formId, dispatch) {
+	setLoading(true, dispatch);	
+	return await axios.delete(`/formulary/${formId}`)
+		.then(({data}) => {
+			setFormulary(data, dispatch);
+			return data;			
+		})
+		.catch(err => {
+			console.log(err);
+			throw err;
+		})
+		.finally(res => {
+			setLoading(false, dispatch);
+		})
+}
+
+export async function deleteFormularyAnswer(formId, formAnswerId, dispatch) {
+	setLoading(true, dispatch);	
+	return await axios.delete(`/formularyAnswer/${formId}/${formAnswerId}`)
+		.then(({data}) => {
+			setFormulary(data, dispatch);
+			return data;			
+		})
+		.catch(err => {
+			console.log(err);
+			throw err;
+		})
+		.finally(res => {
+			setLoading(false, dispatch);
+		})
 }
