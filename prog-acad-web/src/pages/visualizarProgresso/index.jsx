@@ -18,6 +18,11 @@ import ProgressTable from '../../components/ProgressTable';
 import ReportHeader from '../../components/ReportHeader';
 import DialogModal from '../../components/DialogModal';
 import MuiAlert from "@mui/material/Alert";
+import { saveAs } from 'file-saver';
+import { PDFDocument } from 'pdf-lib'
+import PDFMerger from 'pdf-merger-js/browser'
+
+
 
 const VisualizarProgresso = () => {
 
@@ -36,7 +41,7 @@ const VisualizarProgresso = () => {
 
 	useEffect(() => {
 		let answers = (state.formulary.data || {}).dbFormularyAnswers || [];
-		getActivitiesCompleted(answers, dispatch);					
+		getActivitiesCompleted(answers, dispatch);
 	}, [])
 
 
@@ -77,7 +82,7 @@ const VisualizarProgresso = () => {
 		setOpenModal(true);
 	}
 
-	const handleClickYes = async () => {		
+	const handleClickYes = async () => {
 
 		try {
 			await deleteFormularyAnswer(state.formulary.data.dbFormulary.id, itemSelected, dispatch)
@@ -87,15 +92,26 @@ const VisualizarProgresso = () => {
 			setErrorMessage(error.response.data.error)
 		}
 
-		setItemSelected("");				
+		setItemSelected("");
 		let formulary = await getFormulary(state.formulary.data.dbFormulary.id, dispatch).catch(console.log);
 		let answers = (formulary || {}).dbFormularyAnswers || [];
-		getActivitiesCompleted(answers, dispatch);					
-		
+		getActivitiesCompleted(answers, dispatch);
+
 	}
 
-	const handleGerarComprovantes = () => {
-		let comprovantes = (state.formulary.data || {}).dbFiles || [];		
+	const handleGerarComprovantes = async () => {  
+
+		let comprovantes = (state.formulary.data || {}).dbFiles || [];
+		
+		const merger = new PDFMerger();
+
+		var arrayLength = comprovantes.length;
+		for (var i = 0; i < arrayLength; i++) {
+			await merger.add(comprovantes[i].content);
+		}
+
+		await merger.save(`Comprovantes_${Math.floor(Date.now() * Math.random()).toString(36)}`);
+		//saveAs(await merger.saveAsBlob(), "Comprovante.zip")
 	}
 
 	return (
@@ -130,7 +146,9 @@ const VisualizarProgresso = () => {
 
 			</div>
 			<div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
-				<Button variant="contained" color="primary" style={{ marginRight: '20px'}} onClick={goToGerarRelatorio}>Gerar Relatório</Button>
+				<Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={goToGerarRelatorio}>Gerar Relatório</Button>
+
+				{/*<PDFDownloadingLink document={} fileName={}></PDFDownloadingLink>*/}
 				<Button variant="contained" color="primary" onClick={handleGerarComprovantes}>Gerar Comprovantes</Button>
 			</div>
 

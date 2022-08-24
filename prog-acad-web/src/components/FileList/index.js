@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container, FileInfo, Preview } from './styles';
-import 'react-circular-progressbar/dist/styles.css';
 import pdf from '../../img/icone-pdf.png'
 
 const FileList = ({ files, onDelete }) => (
