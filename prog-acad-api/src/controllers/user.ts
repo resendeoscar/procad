@@ -14,12 +14,16 @@ export async function createUser(req: Request, res: Response) {
   }
 
   const dbCareer = await req.db.CareerRepository.get(userInput.careerId);
-  const dbRole = await req.db.RoleRepository.get(userInput.roleId);
-  const dbLevel = await req.db.LevelRepository.get(userInput.levelId);
+  //const dbRole = await req.db.RoleRepository.get(userInput.roleId);
+  //const dbLevel = await req.db.LevelRepository.get(userInput.levelId);
   const dbAcademicDegree = await req.db.AcademicDegreeRepository.get(userInput.academicDegreeId);
   const dbNationality = await req.db.CountryRepository.get(userInput.nationalityId);
 
-  if (!dbCareer || !dbRole || !dbLevel || !dbAcademicDegree || !dbNationality) {
+  if (!dbCareer || !dbAcademicDegree || !dbNationality) {
+    throw new NotFoundError(`Some career, role, level, academicDegree or nationality was wronged informed.`);
+  }
+
+  if (!dbCareer  || !dbAcademicDegree || !dbNationality) {
     throw new NotFoundError(`Some career, role, level, academicDegree or nationality was wronged informed.`);
   }
 

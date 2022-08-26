@@ -10,12 +10,10 @@ export async function up(knex: Knex) {
     table.text("civilStatus").notNullable().defaultTo("Single");
     table.text("email").unique().notNullable();
     table.text("firstName").notNullable();
-    table.text("lastName").notNullable();
-    table.text("levelId").notNullable();
+    table.text("lastName").notNullable();    
     table.text("nationalityId").notNullable().defaultTo("BRA");
     table.text("naturalidade").nullable();
     table.text("password").notNullable();
-    table.text("roleId").notNullable();
     table.text("siape").unique().notNullable();
   });
 }

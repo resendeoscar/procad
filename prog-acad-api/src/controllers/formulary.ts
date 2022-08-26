@@ -13,6 +13,13 @@ export async function createFormulary(req: Request, res: Response) {
     throw new ValidationError(error.message);
   }
 
+  const dbRole = await req.db.RoleRepository.get(formularyInput.roleId);
+  const dbLevel = await req.db.LevelRepository.get(formularyInput.levelId);
+
+  if (!dbRole || !dbLevel) {
+    throw new NotFoundError(`Some career, role, level, academicDegree or nationality was wronged informed.`);
+  }
+
   try {
     const dbFormulary = await req.db.FormularyRepository.insert(
       {
@@ -21,6 +28,9 @@ export async function createFormulary(req: Request, res: Response) {
         to: formularyInput.period.to,
         userId: req.decodedJTW.id,
         status: FormularyStatus.ON_PROGRESS,
+        roleId: dbRole.id,
+        levelId: dbLevel.id,
+        classId: formularyInput.classId,
         comission: JSON.stringify(formularyInput.comission),
       }
     );

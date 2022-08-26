@@ -72,11 +72,11 @@ export default function UserForm({ handleSubmit }) {
 			email,
 			firstName,
 			lastName,
-			levelId, // id do nivel correspondente
+			//levelId, // id do nivel correspondente
 			nationalityId, // id da nacionalidade
 			naturalidade, // nulavel
 			password,
-			roleId, // id do papel exercido
+			//roleId, // id do papel exercido
 			siape,
 			workload, // carga horaria de trabalho
 		}
@@ -180,16 +180,16 @@ export default function UserForm({ handleSubmit }) {
 									label="Estado Civil"
 								>
 									<MenuItem value={CIVIL_STATUS.SINGLE}>
-										Solteiro
+										Solteiro(a)
 									</MenuItem>
 									<MenuItem value={CIVIL_STATUS.MARRIED}>
-										Casado
+										Casado(a)
 									</MenuItem>
 									<MenuItem value={CIVIL_STATUS.DIVORCED}>
-										Divorciado
+										Divorciado(a)
 									</MenuItem>
 									<MenuItem value={CIVIL_STATUS.WIDOWED}>
-										Viúvo
+										Viúvo(a)
 									</MenuItem>
 								</Select>
 								</FormControl>

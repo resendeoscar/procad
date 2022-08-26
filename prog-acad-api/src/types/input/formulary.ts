@@ -11,6 +11,9 @@ export interface FormularyInput {
     from: Date;
     to: Date;
   };
+  levelId: string;
+  roleId: string;
+  classId: string;
   comission: Comission[];
 }
 

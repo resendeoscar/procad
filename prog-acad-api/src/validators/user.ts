@@ -11,11 +11,11 @@ export const userValidator = Joi.object({
   email: Joi.string().email().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  levelId: Joi.string().required(),
+  //levelId: Joi.string().required(),
   nationalityId: Joi.string().required(),
   naturalidade: Joi.string().allow(null),
   password: Joi.string().required(),
-  roleId: Joi.string().required(),
+  //roleId: Joi.string().required(),
   siape: Joi.string().required(),
   workload: Joi.number().allow(null),
 });

@@ -21,11 +21,11 @@ export interface DBUser extends Base {
   email: string;
   firstName: string;
   lastName: string;
-  levelId: string;
+  //levelId: string;
   nationalityId: string;
   naturalidade: string | null;
   password: string;
-  roleId: string;
+  //roleId: string;
   siape: string;
   workload: number | null;
 }
@@ -69,6 +69,9 @@ export interface DBFormulary extends Base {
   from: Date;
   to: Date;
   status: FormularyStatus;
+  roleId: string;
+  levelId: string;
+  classId: string;
 }
 
 export interface DBFormularyAnswer extends Base {

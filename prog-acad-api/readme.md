@@ -212,11 +212,11 @@ Request Body:
   email: string,
   firstName: string,
   lastName: string,
-  levelId: string, // id do nivel correspondente
+  //levelId: string, // id do nivel correspondente
   nationalityId: nationality.id, // id da nacionalidade
   naturalidade: string | null, // nulavel
   password: string,
-  roleId: role.id, // id do papel exercido
+  //roleId: role.id, // id do papel exercido
   siape: string,
   workload: number | null; // carga horaria de trabalho
 }

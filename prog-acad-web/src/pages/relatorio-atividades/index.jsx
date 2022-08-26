@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { 
+import {
     Button,
-    Container, 
-    IconButton, 
+    Container,
+    IconButton,
     Typography,
 } from '@material-ui/core'
 import { ArrowBack } from "@material-ui/icons";
@@ -16,6 +16,7 @@ import VisualizarProgresso from '../visualizarProgresso';
 import FieldsTable from '../../components/FieldsTable';
 import GerarRelatorio from '../gerarRelatorio';
 import ReportHeader from '../../components/ReportHeader';
+import { getLevels, getRoles } from '../../store/reducers/common';
 
 const MuiAlert = React.forwardRef(function Alert(props, ref) {
     return <Alert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -23,12 +24,19 @@ const MuiAlert = React.forwardRef(function Alert(props, ref) {
 
 
 const RelatorioAtividades = () => {
-    
+
     const [state, dispatch] = useContext(GlobalStateContext);
     const match = useRouteMatch();
     const params = useParams();
 
     useEffect(() => {
+
+        async function fetchCommonData() {
+            getLevels(dispatch)
+            getRoles(dispatch)
+        }
+        fetchCommonData();
+
         async function fetchData() {
             let formulary = await getFormulary(params.formularyId, dispatch).catch(console.log);
             await getFields(dispatch);
@@ -44,7 +52,7 @@ const RelatorioAtividades = () => {
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
-        return;
+            return;
         }
 
         setOpen(false);
@@ -55,25 +63,25 @@ const RelatorioAtividades = () => {
 
         return dbFormularyAnswers.reduce((count, newV) => {
 
-            if(newV.fieldId === fieldId) count += 1;
+            if (newV.fieldId === fieldId) count += 1;
 
             return count;
         }, 0)
     }
 
-    return (        
+    return (
         <Switch>
             <Route path={`${match.path}/campo/:campoId`}>
-                <Activities/>
+                <Activities />
             </Route>
             <Route exact path={match.path}>
                 <Container>
-                    
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                         <div>
                             <Link to="/">
                                 <IconButton edge="start" aria-label="voltar">
-                                    <ArrowBack/>
+                                    <ArrowBack />
                                 </IconButton>
                             </Link>
                             <Typography variant="button">
@@ -95,16 +103,16 @@ const RelatorioAtividades = () => {
                     </div>
 
                     <div>
-                        <ReportHeader/>
-                        <FieldsTable list={(state.report.fields || [])} performedNumber={performedNumber}/>
-                        
+                        <ReportHeader />
+                        <FieldsTable list={(state.report.fields || [])} performedNumber={performedNumber} />
+
                     </div>
-                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '24px'}}>
-                        <Link to={`${match.url}/progresso`}>                             
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+                        <Link to={`${match.url}/progresso`}>
                             <Button variant="contained" color="primary" >Visualizar Progresso</Button>
                         </Link>
                     </div>
-                    
+
                     <Snackbar open={open} autoHideDuration={3500} onClose={handleClose} >
                         <MuiAlert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                             Relatório criado com sucesso!
@@ -114,9 +122,9 @@ const RelatorioAtividades = () => {
             </Route>
 
             <Route exact path={`${match.path}/progresso`}>
-                <VisualizarProgresso/>
+                <VisualizarProgresso />
             </Route>
-            
+
         </Switch>
     );
 }
