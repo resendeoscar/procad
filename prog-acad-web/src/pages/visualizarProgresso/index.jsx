@@ -19,8 +19,8 @@ import ReportHeader from '../../components/ReportHeader';
 import DialogModal from '../../components/DialogModal';
 import MuiAlert from "@mui/material/Alert";
 import { saveAs } from 'file-saver';
-import { PDFDocument } from 'pdf-lib'
 import PDFMerger from 'pdf-merger-js/browser'
+import JSZip from 'jszip';
 
 
 
@@ -41,7 +41,7 @@ const VisualizarProgresso = () => {
 
 	useEffect(() => {
 		let answers = (state.formulary.data || {}).dbFormularyAnswers || [];
-		getActivitiesCompleted(answers, dispatch);		
+		getActivitiesCompleted(answers, dispatch);
 	}, [])
 
 
@@ -49,7 +49,7 @@ const VisualizarProgresso = () => {
 		history.goBack()
 	}
 
-	const goToGerarRelatorio = () => {		
+	const goToGerarRelatorio = () => {
 		history.push("relatorio")
 	}
 
@@ -99,10 +99,10 @@ const VisualizarProgresso = () => {
 
 	}
 
-	const handleGerarComprovantes = async () => {  
+	const handleGerarComprovantes = async () => {
 
 		let comprovantes = (state.formulary.data || {}).dbFiles || [];
-		
+
 		const merger = new PDFMerger();
 
 		var arrayLength = comprovantes.length;
@@ -110,8 +110,14 @@ const VisualizarProgresso = () => {
 			await merger.add(comprovantes[i].content);
 		}
 
-		await merger.save(`Comprovantes_${Math.floor(Date.now() * Math.random()).toString(36)}`);
-		//saveAs(await merger.saveAsBlob(), "Comprovante.zip")
+		const zip = new JSZip();
+
+		zip.file("Comprovantes.pdf", merger.saveAsBlob());
+		
+		zip.generateAsync({ type: "blob" }).then(function (content) {			
+			saveAs(content, `Comprovantes_${Math.floor(Date.now() * Math.random()).toString(36)}`);
+		});
+		
 	}
 
 	return (
