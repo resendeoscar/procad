@@ -1,7 +1,6 @@
 import { Typography } from '@material-ui/core';
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { GlobalStateContext } from '../../store'
-import { getActivitiesCompleted } from '../../store/reducers/report';
 
 
 const Comission = ({ list }) => {
@@ -23,7 +22,7 @@ const Comission = ({ list }) => {
 }
 
 
-export default function ReportHeader({ roleName }) {
+export default function ReportHeader() {
 
     const [state, dispatch] = useContext(GlobalStateContext);
     
@@ -77,7 +76,7 @@ export default function ReportHeader({ roleName }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                 <div style={{ marginRight: '26px' }}>
                     <Typography variant="body1" color="textSecondary" style={{ fontSize: 12 }}>
-                        Tipo de Solicitação: <span className="fnt-color-black">{solicitacaoLabel[((state.formulary.data || {}).dbFormulary || {}).type] || "N/A"}</span>
+                        Tipo de Solicitação: <span className="fnt-color-black">{((state.formulary.data || {}).dbFormulary || {}).type || "N/A"}</span>
                     </Typography>
                     <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px' }}>
                         Interstício: <span className="fnt-color-black fnt-normal">{`${new Date(((state.formulary.data || {}).dbFormulary || {}).from).toLocaleDateString()} a ${new Date(((state.formulary.data || {}).dbFormulary || {}).to).toLocaleDateString()}`}</span>

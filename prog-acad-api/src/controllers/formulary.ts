@@ -51,6 +51,10 @@ export async function upsertFormularyAnswer(req: Request, res: Response) {
     throw new ValidationError(error.message);
   }
 
+  if (!formularyAnswerInput.files.length) {
+    throw new InvalidActionError("É necessário incluir os comprovantes.");
+  }
+
   const dbFormulary = await req.db.FormularyRepository.get(formularyAnswerInput.formularyId);
 
   if (!dbFormulary) {
@@ -64,6 +68,8 @@ export async function upsertFormularyAnswer(req: Request, res: Response) {
   if (dbFormulary.userId !== req.decodedJTW.id) {
     throw new InvalidActionError("You're not authorized to update this formulary.");
   }
+
+ 
 
   const dbFormularyAnswers = await req.db.FormularyAnswerRepository.upsertFormularyAnswers(req, formularyAnswerInput);
 

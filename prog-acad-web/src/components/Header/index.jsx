@@ -5,18 +5,14 @@ import {
 	Typography, 
 	Menu, 
 	MenuItem, 
-	IconButton,
 	Button
 } from '@material-ui/core';
 
-import { Link, useHistory } from 'react-router-dom';
-
+import { useHistory } from 'react-router-dom';
 import { AccountCircle } from '@material-ui/icons';
-
 import styles from "./styles";
 import { logout } from '../../store/reducers/auth';
 import { GlobalStateContext } from '../../store';
-
 
 function Header() {
 

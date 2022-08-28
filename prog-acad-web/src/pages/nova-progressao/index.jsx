@@ -74,6 +74,7 @@ const NovaProgressao = () => {
 		setOpen(false);
 		setErrorMessage("");
 	};
+	
 	const handleCloseSuccess = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
@@ -81,15 +82,12 @@ const NovaProgressao = () => {
 		setSuccess(false);
 	};
 
-
-
 	const handleSolicitacao = (event) => {
 		setSolicitacao(event.target.value);
 	};
 
 	const handleStartDateChange = (event) => {
 		let x = moment(event.target.value, "yyyy-MM-DD");
-		// x.add(2, "y");
 		x.subtract(2, "y");
 		x.add(1, "d");
 		if (x.isValid()) {
@@ -130,8 +128,7 @@ const NovaProgressao = () => {
 			classId: classId.toString(),
 			comission: []
 		}
-
-		console.log(dto)
+		
 		if (primeiroProfessor.value) {
 			dto.comission.push({
 				professorName: primeiroProfessor.value,
@@ -228,8 +225,8 @@ const NovaProgressao = () => {
 											defaultValue="top"
 											value={solicitacao}
 											onChange={handleSolicitacao}>
-											<FormControlLabel value="Progressao" control={<Radio color="primary" />} label="Progressão" />
-											<FormControlLabel value="Promocao" control={<Radio color="primary" />} label="Promoção" />
+											<FormControlLabel value="Progressão" control={<Radio color="primary" />} label="Progressão" />
+											<FormControlLabel value="Promoção" control={<Radio color="primary" />} label="Promoção" />
 										</RadioGroup>
 									</FormControl>
 								</div>

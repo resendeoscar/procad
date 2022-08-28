@@ -41,7 +41,7 @@ const VisualizarProgresso = () => {
 
 	useEffect(() => {
 		let answers = (state.formulary.data || {}).dbFormularyAnswers || [];
-		getActivitiesCompleted(answers, dispatch);
+		getActivitiesCompleted(answers, dispatch);		
 	}, [])
 
 
@@ -49,7 +49,7 @@ const VisualizarProgresso = () => {
 		history.goBack()
 	}
 
-	const goToGerarRelatorio = () => {
+	const goToGerarRelatorio = () => {		
 		history.push("relatorio")
 	}
 

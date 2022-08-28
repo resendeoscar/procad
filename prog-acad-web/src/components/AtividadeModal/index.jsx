@@ -9,7 +9,7 @@ import {
     Input
 } from '@material-ui/core';
 import PaperContainer from '../PaperContainer';
-import { HighlightOff, CloudUpload } from "@material-ui/icons"
+import { HighlightOff } from "@material-ui/icons"
 import { GlobalStateContext } from '../../store';
 import moment from 'moment';
 import Upload from '../Upload';
@@ -29,10 +29,8 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
     const [semestre2, setSemestre2] = useState(0);
     const [semestre3, setSemestre3] = useState(0);
     const [semestre4, setSemestre4] = useState(0);
-    const [arquivoPDF, setArquivoPDF] = useState({});
 
     let { from = '2021-10-4' } = (state.formulary.data || {}).dbFormulary || {};
-
 
     let dates = {
         p1: moment(from),
@@ -40,6 +38,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         p3: moment(from).add(12, "months"),
         p4: moment(from).add(18, "months"),
     }
+
     const intersticio = {
         period1: `${dates.p1.year()}.${dates.p1.month() < 7 ? 1 : 2}`,
         period2: `${dates.p2.year()}.${dates.p2.month() < 7 ? 1 : 2}`,
@@ -56,21 +55,13 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
         var arrayLength = files.length;
         for (var i = 0; i < arrayLength; i++) {
-            listAux.push({ 
-                id: uniqueId(), 
-                name: files[i].name, 
+            listAux.push({
+                id: uniqueId(),
+                name: files[i].name,
                 readableSize: filesize(files[i].size),
-                content: await toBase64(files[i]) });
+                content: await toBase64(files[i])
+            });
         }
-
-        /*const uploadedFiles = files.map(async file => ({
-            file,
-            id: uniqueId(),
-            name: file.name,
-            readableSize: filesize(file.size),                        
-            url: null,
-            //result: await toBase64(file),
-        }))*/        
 
         list = upFiles.concat(listAux);
         setUploadedFiles(list);
@@ -82,17 +73,21 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
 
     useEffect(() => {
+        
         let { from = '2021-10-4', to = '2022-10-4' } = (state.formulary.data || {}).dbFormulary || {};
+
+        setUploadedFiles([]);
 
         let dtoFiles = ((atividade || {}).files || {})
 
-        if (dtoFiles) {
-            //setArquivoPDF({ filename: dtoFiles.filename, content: dtoFiles.content })  
-            setUploadedFiles([]);
+        if (!!dtoFiles.length) {
+
             let list = []
 
             var arrayLength = dtoFiles.length;
+
             for (var i = 0; i < arrayLength; i++) {
+
                 list.push({ id: dtoFiles[i].id, name: dtoFiles[i].filename, content: dtoFiles[i].content, });
             }
 
@@ -120,7 +115,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         models.forEach(m => {
             let exist = answer.find(ans => ans.semester === m.period)
             if (exist) m.cb(exist.quantity)
-        })
+        }) 
     }, [atividade])
 
     const getTotal = () => {
@@ -142,16 +137,9 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         setSemestre2(0);
         setSemestre3(0);
         setSemestre4(0);
-        setArquivoPDF({})
         setUploadedFiles([])
 
         handleClose()
-    }
-
-    const handleFileUpload = async (event) => {
-        let filename = event.target.files[0].name;
-        let result = await toBase64(event.target.files[0]);
-        setArquivoPDF({ filename, content: result })
     }
 
     const toBase64 = fileObj => new Promise((resolve, reject) => {
@@ -168,9 +156,13 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
         let arquivos = []
 
-        var arrayLength = upFiles.length;
-        for (var i = 0; i < arrayLength; i++) {
-            arquivos.push({ id: upFiles[i].id, filename: upFiles[i].name, content: upFiles[i].content });
+        if (!!upFiles.length) {
+
+            var arrayLength = upFiles.length;
+            for (var i = 0; i < arrayLength; i++) {
+                arquivos.push({ id: upFiles[i].id, filename: upFiles[i].name, content: upFiles[i].content });
+            }
+
         }
 
         const formDto = {
@@ -294,58 +286,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
                             </div>
 
-                            {/*
-                            <div style={{ marginTop: 24, display: 'flex', gap: 36 }}>
-                                <div>
-
-                                    <Typography color="textSecondary" variant="body2">Comprovante de atividades</Typography>
-
-                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-                                        <label
-                                            htmlFor="comprovante-atividade"
-                                            style={{
-                                                borderRadius: 4,
-                                                display: 'inline-block',
-                                                textAlign: 'center',
-                                            }}>
-                                            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-
-                                                <div>
-                                                    <input
-                                                        type="file"
-                                                        id="comprovante-atividade"
-                                                        accept="application/pdf"
-                                                        placeholder="Anexar PDF"
-                                                        onChange={handleFileUpload}
-                                                        style={{ display: 'none' }}
-                                                    />
-
-                                                    <Button variant="contained" component="span" size="small" color="primary">
-                                                        Anexar PDF
-                                                        <CloudUpload style={{ marginLeft: "10px" }} />
-                                                    </Button>
-                                                </div>
-
-
-                                            </div>
-
-
-                                        </label>
-
-
-                                        <div style={{ marginLeft: '20px' }}>
-                                            {arquivoPDF.content && <a download={arquivoPDF.filename || "comprovante.pdf"} href={arquivoPDF.content} title='Fazer download'>
-                                                <Typography color="textSecondary">
-                                                    {arquivoPDF.filename}
-                                                </Typography>
-                                            </a>}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            */}
-
-                            <div style={{ marginTop: '20px', marginBottom: '15px'}}>
+                            <div style={{ marginTop: '20px', marginBottom: '15px' }}>
                                 <div style={{ marginBottom: '15px' }}>
                                     <Typography color="textSecondary" variant="body2">Comprovante das atividades</Typography>
                                 </div>

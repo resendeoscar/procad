@@ -23,14 +23,12 @@ export class FormularyAnswerRepository extends Repository<DBFormularyAnswer> {
       //const file = formularyAnswerInput.file;
       const files = formularyAnswerInput.files;
 
-      
-
       // if its an update
       if (dbFormularyAnswer) {
         
         await req.knex("files").delete().where("formularyAnswerId", dbFormularyAnswer.id)
 
-        if (files) {
+        if (!!files.length) {
 
           var arrayLength = files.length;
 

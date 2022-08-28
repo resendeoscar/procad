@@ -1,6 +1,6 @@
 export enum FormularyType {
-  PROGRESSAO = "Progressao",
-  PROMOCAO = "Promocao",
+  PROGRESSAO = "Progressão",
+  PROMOCAO = "Promoção",
 }
 
 export enum FormularyStatus {

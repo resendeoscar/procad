@@ -26,7 +26,7 @@ export const formularyAnswersValidator = Joi.object({
     id: Joi.string().required(),
     filename: Joi.string().required(),
     content: Joi.string().required(),
-  }),
+  }).required(),
   answers: Joi.array().items({    
     semester: Joi.string().required(),
     quantity: Joi.number().required(),
