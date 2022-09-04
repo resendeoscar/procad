@@ -16,10 +16,10 @@ export default function GerarRelatorio() {
 
     useEffect(() => {
 
-        async function fetchData() {                        
+        async function fetchData() {
             let formulary = await getFormulary(params.formularyId, dispatch).catch(console.log);
-		    let answers = (formulary || {}).dbFormularyAnswers || [];
-		    getActivitiesCompleted(answers, dispatch);
+            let answers = (formulary || {}).dbFormularyAnswers || [];
+            getActivitiesCompleted(answers, dispatch);
         }
 
         fetchData();
@@ -48,7 +48,7 @@ export default function GerarRelatorio() {
 
     }
 
-    const printPage = () => {    
+    const printPage = () => {
         window.print();
     }
 
@@ -58,41 +58,41 @@ export default function GerarRelatorio() {
 
     const downloadCSVFile = (csv, filename) => {
         var csv_file, download_link;
-    
-        csv_file = new Blob(["\uFEFF"+csv], {
+
+        csv_file = new Blob(["\uFEFF" + csv], {
             type: 'text/csv; charset=utf-8'
         });
-    
+
         download_link = document.createElement("a");
-    
+
         download_link.download = filename;
-    
+
         download_link.href = window.URL.createObjectURL(csv_file);
-    
+
         download_link.style.display = "none";
-    
+
         document.body.appendChild(download_link);
-    
-        download_link.click();        
+
+        download_link.click();
 
     }
 
-    const htmlToCSV = (filename) => {                
+    const htmlToCSV = (filename) => {
         var data = [];
         var rows = document.querySelectorAll("table tr");
-                
+
         for (var i = 0; i < rows.length; i++) {
             var row = [], cols = rows[i].querySelectorAll("td, th");
-                    
+
             for (var j = 0; j < cols.length; j++) {
-                    row.push(cols[j].innerText);
+                row.push(cols[j].innerText);
             }
-                    
-            data.push(row.join(";")); 		
-        }        
-    
+
+            data.push(row.join(";"));
+        }
+
         downloadCSVFile(data.join("\n"), filename);
-    }    
+    }
 
     function getRelatorio() {
 
@@ -102,7 +102,7 @@ export default function GerarRelatorio() {
 
         let result = dbFormularyAnswers.reduce(function (r, a) {
 
-            r[a.fieldId] = r[a.fieldId] || [];            
+            r[a.fieldId] = r[a.fieldId] || [];
 
             let activity = state.report.allActivities.find(acti => acti.id === a.activityId) || {};
 
@@ -213,48 +213,63 @@ export default function GerarRelatorio() {
                     <table width="100%">
                         <tbody>
                             <tr>
-                                <td>DOCENTE: {user.firstName + " " + user.lastName}</td>
-                                <td colspan="10">SIAPE: {user.siape}</td>
+                                <td colSpan={6}>
+                                    <b style={{ fontWeight: 'bolder' }}>DOCENTE: </b>
+                                    {user.firstName + " " + user.lastName}
+                                </td>
+
+                                <td colSpan={5}>
+                                    <b style={{ fontWeight: 'bolder' }}>SIAPE: </b>
+                                    {user.siape}
+                                </td>
                             </tr>
+
                             <tr>
-                                <td>SOLICITAÇÃO:</td>
-                                <td align="center" colspan="5">PROMOÇÃO({type === "Promoção" ? 'X' : ''})</td>
-                                <td align="center" colspan="5">PROGRESSÃO({type === "Progressão" ? 'X' : ''})</td>
+                                <td style={{ fontWeight: 'bolder' }}>SOLICITAÇÃO:</td>
+                                <td style={{ fontWeight: 'bolder' }} align="center" colSpan={5}>PROMOÇÃO({type === "Promoção" ? 'X' : ''})</td>
+                                <td style={{ fontWeight: 'bolder' }} align="center" colSpan={5}>PROGRESSÃO({type === "Progressão" ? 'X' : ''})</td>
                             </tr>
+
                             <tr>
-                                <td colspan="11">COMISSÃO:</td>
+                                <td style={{ fontWeight: 'bolder' }} colSpan={11}>COMISSÃO:</td>
                             </tr>
+
                             {comission.map(comis =>
-                                <tr><td colspan="11">{`Prof. ${comis.professorName} - Departamento ${comis.department} - Instituto ${comis.institute}.`}</td></tr>
+                                <tr>
+                                    <td style={{ paddingLeft: '80px' }} colSpan={11}>{`Prof. ${comis.professorName} - Departamento ${comis.department} - Instituto ${comis.institute}.`}</td>
+                                </tr>
                             )}
 
                             <tr>
-                                <td>DETALHE DA SOLICITAÇÃO:</td>
-                                <td colspan="10" align="center">INTERSTÍCIO: {`${moment(from).format("DD/MM/yyyy")} a ${moment(to).format("DD/MM/yyyy")}`}</td>
+                                <td style={{ fontWeight: 'bolder' }}>DETALHE DA SOLICITAÇÃO:</td>
+                                <td colSpan={10} align="center">
+                                    <b style={{ fontWeight: 'bolder' }}>INTERSTÍCIO: </b>
+                                    {`${moment(from).format("DD/MM/yyyy")} a ${moment(to).format("DD/MM/yyyy")}`}
+                                </td>
                             </tr>
 
                             <tr>
-                                <th>CAMPO</th>
+                                <th style={{ fontWeight: 'bolder' }}>CAMPO</th>
                                 <th>&nbsp;</th>
-                                <th colspan="4" align="center">OCORRÊNCIA</th>
+                                <th style={{ fontWeight: 'bolder' }} colSpan={4} align="center">OCORRÊNCIA</th>
                                 <th>&nbsp;</th>
-                                <th colspan="4" align="center">PONTUAÇÃO DETALHADA</th>
+                                <th style={{ fontWeight: 'bolder' }} colSpan={4} align="center">PONTUAÇÃO DETALHADA</th>
                             </tr>
 
                             {
                                 getRelatorio().map(rel => (<>
                                     <tr>
                                         <th>{rel.campo}</th>
-                                        <th>PONTOS</th>
-                                        <th align="center">{intersticio.period1}</th>
-                                        <th align="center">{intersticio.period2}</th>
-                                        <th align="center">{intersticio.period3}</th>
-                                        <th align="center">{intersticio.period4}</th>
-                                        <th align="center">TOTAL</th>
-                                        <th align="center">{intersticio.period1}</th>
-                                        <th align="center">{intersticio.period2}</th>
-                                        <th align="center">{intersticio.period3}</th>
-                                        <th align="center">{intersticio.period4}</th>
+                                        <th style={{ fontWeight: 'bolder' }}>PONTOS</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period1}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period2}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period3}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period4}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">TOTAL</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period1}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period2}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period3}</th>
+                                        <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period4}</th>
                                     </tr>
                                     {rel.atividades.map(ativ => (
                                         <tr>
@@ -276,21 +291,21 @@ export default function GerarRelatorio() {
                             }
 
                             <tr>
-                                <td colspan="11" align="center">RESUMO DE PONTUAÇÃO POR SEMESTRE</td>
+                                <td style={{ fontWeight: 'bolder' }} colSpan={11} align="center">RESUMO DE PONTUAÇÃO POR SEMESTRE</td>
                             </tr>
                             <tr>
-                                <th colspan="6" align="center">ATIVIDADES</th>
-                                <th align="center">{intersticio.period1}</th>
-                                <th align="center">{intersticio.period2}</th>
-                                <th align="center">{intersticio.period3}</th>
-                                <th align="center">{intersticio.period4}</th>
-                                <th align="center">TOTAL</th>
+                                <th style={{ fontWeight: 'bolder' }} colSpan={6} align="center">ATIVIDADES</th>
+                                <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period1}</th>
+                                <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period2}</th>
+                                <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period3}</th>
+                                <th style={{ fontWeight: 'bolder' }} align="center">{intersticio.period4}</th>
+                                <th style={{ fontWeight: 'bolder' }} align="center">TOTAL</th>
                             </tr>
 
                             {
                                 getRelatorio().map(rel => (<>
                                     <tr>
-                                        <th colspan="6">{rel.campo}</th>
+                                        <th colSpan={6}>{rel.campo}</th>
                                         <th align="center">{rel.campoDetailed.period1}</th>
                                         <th align="center">{rel.campoDetailed.period2}</th>
                                         <th align="center">{rel.campoDetailed.period3}</th>

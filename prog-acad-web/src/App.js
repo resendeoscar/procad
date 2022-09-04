@@ -52,9 +52,10 @@ function App() {
       <Router>
         <Switch>
 
-
           <Route path="/login" component={Auth} />
           <Route path="/cadastro" component={Auth} />
+          <Route path="/forgotPassword" component={Auth} />
+          <Route path="/resetPassword/:userId" component={Auth} />
 
           <PrivateRoute path="/relatorio-de-atividades/:formularyId/relatorio">
                 <GerarRelatorio/>

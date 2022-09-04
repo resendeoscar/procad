@@ -17,6 +17,10 @@
   margin-right: 10px;
 }
 
+.campo-negrito {
+  font-weight: bold;
+}
+
 @media print {
     body * {
       visibility: hidden;

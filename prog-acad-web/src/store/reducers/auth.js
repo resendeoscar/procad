@@ -99,3 +99,33 @@ export async function signUp(form, dispatch) {
             setLoading(false, dispatch);
         })
 }
+
+export async function forgotPassword(form, dispatch) {
+    setLoading(true, dispatch);
+    return await axios.post("/forgotPassword", form)
+        .then(({data}) => {
+            return data
+        })
+        .catch(err => {
+            console.log(err);
+            throw err
+        })
+        .finally(r => {
+            setLoading(false, dispatch);
+        })
+}
+
+export async function resetPassword(form, dispatch) {
+    setLoading(true, dispatch);
+    return await axios.post("/resetPassword", form)
+        .then(({data}) => {
+            return data
+        })
+        .catch(err => {
+            console.log(err);
+            throw err
+        })
+        .finally(r => {
+            setLoading(false, dispatch);
+        })
+}
