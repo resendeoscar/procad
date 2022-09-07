@@ -49,7 +49,7 @@ export default function ProgressTable({ list, onDeleteClick }) {
               <StyledTableCell align="left">{row.atividade}</StyledTableCell>
               <StyledTableCell align="center">{row.points}</StyledTableCell>
               <StyledTableCell align="center">
-                <IconButton edge="start" aria-label="Deletar" onClick={() => onDeleteClick(row.formularyAnswerId)}>
+                <IconButton edge="start" aria-label="Deletar" title='Deletar Atividade' onClick={() => onDeleteClick(row.formularyAnswerId)}>
                   <Delete />
                 </IconButton>
               </StyledTableCell>

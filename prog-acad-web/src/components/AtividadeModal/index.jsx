@@ -30,6 +30,10 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
     const [semestre3, setSemestre3] = useState(0);
     const [semestre4, setSemestre4] = useState(0);
 
+    const [erroQuantidade, setErroQuantidade] = useState(false);
+    const [erroComprovantes, setErroComprovantes] = useState(false);
+
+
     let { from = '2021-10-4' } = (state.formulary.data || {}).dbFormulary || {};
 
     let dates = {
@@ -65,6 +69,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
         list = upFiles.concat(listAux);
         setUploadedFiles(list);
+        setErroComprovantes(false); 
     };
 
     const handleDeleteFile = id => {
@@ -73,7 +78,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
 
 
     useEffect(() => {
-        
+
         let { from = '2021-10-4', to = '2022-10-4' } = (state.formulary.data || {}).dbFormulary || {};
 
         setUploadedFiles([]);
@@ -115,12 +120,12 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         models.forEach(m => {
             let exist = answer.find(ans => ans.semester === m.period)
             if (exist) m.cb(exist.quantity)
-        }) 
+        })
     }, [atividade])
 
     const getTotal = () => {
         const sum = semestre1 + semestre2 + semestre3 + semestre4;
-        let dto = sum / atividade.peso;
+        let dto = sum / atividade.peso;        
         return (dto * atividade.pontos).toFixed(2);
     }
 
@@ -128,8 +133,9 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         let dto = Number(value);
         if (Number.isNaN(dto) || dto < 0) {
             dto = 0;
-        }
+        }        
         semestre(dto);
+        if (dto > 0) {setErroQuantidade(false); }
     }
 
     const onClose = () => {
@@ -137,7 +143,9 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         setSemestre2(0);
         setSemestre3(0);
         setSemestre4(0);
-        setUploadedFiles([])
+        setUploadedFiles([]);
+        setErroQuantidade(false); 
+        setErroComprovantes(false); 
 
         handleClose()
     }
@@ -148,6 +156,26 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
     });
+
+    const validFormularyAnswer = () => {
+
+        setErroQuantidade(false); 
+        setErroComprovantes(false); 
+        let valido = true;
+
+        if ((semestre1 + semestre2 + semestre3 + semestre4) <= 0) {
+            setErroQuantidade("Quantidade de ocorrência inválida.");     
+            valido = false;            
+        }
+
+        if (upFiles.length <= 0) {            
+            setErroComprovantes("É necessário incluir pelo menos um comprovante.");            
+            valido = false;            
+        }        
+                
+        return valido;
+    }
+
 
     const handleSubmit = () => {
 
@@ -190,10 +218,12 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                 },
             ]
         }
+        if (validFormularyAnswer()) {
+            onSubmit(formDto).then(r => {
+                onClose();
+            });
+        }
 
-        onSubmit(formDto).then(r => {
-            onClose();
-        });
     }
 
     return (
@@ -239,6 +269,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                                             type="number"
                                             size="small"
                                             value={semestre1}
+                                            error={erroQuantidade}
                                             onChange={(event) => handleSemestreInput(event.target.value, setSemestre1)} />
 
                                         <TextField
@@ -247,6 +278,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                                             type="number"
                                             size="small"
                                             value={semestre2}
+                                            error={erroQuantidade}
                                             onChange={(event) => handleSemestreInput(event.target.value, setSemestre2)} />
 
                                         <TextField
@@ -255,6 +287,7 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                                             type="number"
                                             size="small"
                                             value={semestre3}
+                                            error={erroQuantidade}
                                             onChange={(event) => handleSemestreInput(event.target.value, setSemestre3)} />
 
                                         <TextField
@@ -263,8 +296,12 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                                             type="number"
                                             size="small"
                                             value={semestre4}
+                                            error={erroQuantidade}
                                             onChange={(event) => handleSemestreInput(event.target.value, setSemestre4)} />
 
+                                    </div>
+                                    <div style={{ marginTop: '5px', textAlign: 'center', color: 'red' }}>
+                                        <Typography style={{ fontSize: 12 }}>{erroQuantidade}</Typography>
                                     </div>
                                 </div>
 
@@ -287,8 +324,11 @@ const AtividadeModal = ({ open, handleClose, atividade, onSubmit }) => {
                             </div>
 
                             <div style={{ marginTop: '20px', marginBottom: '15px' }}>
-                                <div style={{ marginBottom: '15px' }}>
+                                <div style={{}}>
                                     <Typography color="textSecondary" variant="body2">Comprovante das atividades</Typography>
+                                </div>
+                                <div style={{ marginTop: '0px', textAlign: 'left', color: 'red', marginBottom: '15px' }}>
+                                    <Typography style={{ fontSize: 12 }}>{erroComprovantes}</Typography>
                                 </div>
                                 <Upload onUpload={handleUpload} />
                                 {!!upFiles.length && (

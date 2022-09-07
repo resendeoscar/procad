@@ -48,7 +48,7 @@ export default function FieldsTable({list, performedNumber}) {
             <StyledTableCell align="left" >CAMPO</StyledTableCell>
             {/* <StyledTableCell align="left" >REALIZADAS</StyledTableCell> */}
             <StyledTableCell align="center" >REALIZADAS</StyledTableCell>
-            <StyledTableCell align="left" >&nbsp;</StyledTableCell>
+            
           </TableRow>
         </TableHead>
         {/* <div style={{maxHeight: '420px', overflowY: 'auto', minWidth: '100%', display: 'block', flex: 1}}> */}
@@ -60,7 +60,7 @@ export default function FieldsTable({list, performedNumber}) {
                 <StyledTableCell align="left">{row.campo}</StyledTableCell>
                 {/* <StyledTableCell align="center">{0}</StyledTableCell> */}
                 <StyledTableCell align="center">{performedNumber(row.id)}</StyledTableCell>
-                <StyledTableCell align="center"><ArrowForward/></StyledTableCell>
+                
 
                 {/* <StyledTableCell align="left">{new Date(row.createdAt).toLocaleDateString()}</StyledTableCell>
                 <StyledTableCell align="left">{new Date(row.from).toLocaleDateString()}</StyledTableCell> */}

@@ -28,11 +28,14 @@ export default function ForgotPasswordForm({ handleSubmit }) {
     }
 
     return (
-        <div style={{ marginTop: '64px' }}>
-            <div className="app-title-container">
-                <h1 className="app-title">procad</h1>
-            </div>
-            <div className="signup-container">
+        <Grid container alignItems="center" flexwrap="wrap" style={{ height: '100vh' }} >
+			<Grid justifyContent="flex-end" xs={12} md={6}>
+				<div className="title-auth">
+					<h1 className="procad">procad</h1>
+					<p className="subtitle">Sistema de Progressão e Promoção de Carreira Acadêmica</p>
+				</div>
+			</Grid>
+            <Grid container justifyContent="flex-end" xs={12} md={6} className="login-form-container">
                 <form className="signup-form" noValidate autoComplete="off" onSubmit={handleSubmit}>
                     <Typography variant="h5" style={{ marginBottom: '16px', alignSelf: 'start' }}>Recuperar Senha</Typography>
                     <Grid container spacing={12}>
@@ -49,7 +52,7 @@ export default function ForgotPasswordForm({ handleSubmit }) {
                             style={{ marginBottom: '8px' }}
                         />
                     </Grid>
-                    <Grid container justifyContent="center">
+                    <Grid container justifyContent="center" style={{ marginTop: '16px', marginBottom: '10px' }}>
                         <Grid item xs={12} md={8}>
                             <Button
                                 onClick={onSubmit}
@@ -70,7 +73,7 @@ export default function ForgotPasswordForm({ handleSubmit }) {
 						</Button>
 					</Link>
                 </form>
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     )
 }

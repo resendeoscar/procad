@@ -92,7 +92,7 @@ export default function ProgressionList() {
                     <FormulariesTable list={state.formulary.list} onDeleteClick={handleDeleteClick}/>
                     :
                     <div>
-                        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                        <div style={{ textAlign: 'center', marginTop: '50px', border: '1px dashed #ddd', borderColor: '#ddd' , borderRadius: '8px', padding: '15px' }}>
                             <Typography variant="body1" color="textSecondary">Nenhuma solicitação em progresso</Typography>
                         </div>
                     </div>

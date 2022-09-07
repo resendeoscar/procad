@@ -70,16 +70,16 @@ export default function FormulariesTable({ list, onDeleteClick }) {
               <StyledTableCell align="left">{new Date(row.createdAt).toLocaleDateString()}</StyledTableCell>
               <StyledTableCell align="left">{new Date(row.from).toLocaleDateString()}</StyledTableCell>
               <StyledTableCell align="right">
-                <IconButton edge="start" aria-label="Editar" onClick={() => handleClickEdit(row.id)}>
+                <IconButton edge="start" aria-label="Editar" title="Editar Solicitação" onClick={() => handleClickEdit(row.id)}>
                   <Edit />
                 </IconButton>
-                <IconButton edge="start" aria-label="Visualizar Progresso" onClick={() => handleClickViewProgress(row.id)}>
+                <IconButton edge="start" aria-label="Visualizar Progresso" title='Visualizar Progresso' onClick={() => handleClickViewProgress(row.id)}>
                   <VisibilityOutlined />
                 </IconButton>
-                <IconButton edge="start" aria-label="Gerar Relatório" onClick={() => handleClickReport(row.id)}>
+                <IconButton edge="start" aria-label="Gerar Relatório" title="Gerar Relatório" onClick={() => handleClickReport(row.id)}>
                   <Assessment />
                 </IconButton>
-                <IconButton edge="start" aria-label="Deletar" onClick={() => onDeleteClick(row.id)}>
+                <IconButton edge="start" aria-label="Deletar" title="Deletar Solicitação" onClick={() => onDeleteClick(row.id)}>
                   <Delete />
                 </IconButton>
               </StyledTableCell>

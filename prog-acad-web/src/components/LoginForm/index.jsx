@@ -10,11 +10,11 @@ export default function LoginForm({ handleSubmit }) {
 			<Grid justifyContent="flex-end" xs={12} md={6}>
 				<div className="title-auth">
 					<h1 className="procad">procad</h1>
-					<p className="subtitle">Sistema de progressão e promoção de carreira acadêmica</p>
+					<p className="subtitle">Sistema de Progressão e Promoção de Carreira Acadêmica</p>
 				</div>
 			</Grid>
 
-			<Grid container justifyContent="center" xs={12} md={6} className="login-form-container">
+			<Grid container justifyContent="flex-end" xs={12} md={6} className="login-form-container">
 				<form className="login-form-wrapper" noValidate autoComplete="off" onSubmit={handleSubmit}>
 					<Typography variant="h4" style={{ marginBottom: '12px', padding: '8px' }}>Login</Typography>
 					<TextField

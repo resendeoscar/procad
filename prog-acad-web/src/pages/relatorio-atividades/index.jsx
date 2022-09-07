@@ -5,7 +5,7 @@ import {
     IconButton,
     Typography,
 } from '@material-ui/core'
-import { ArrowBack } from "@material-ui/icons";
+import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import { Link, Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
 import Activities from '../activities';
 import { getFields, getActivitiesCompleted } from '../../store/reducers/report';
@@ -76,8 +76,7 @@ const RelatorioAtividades = () => {
             </Route>
             <Route exact path={match.path}>
                 <Container>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                         <div>
                             <Link to="/">
                                 <IconButton edge="start" aria-label="voltar">
@@ -85,21 +84,26 @@ const RelatorioAtividades = () => {
                                 </IconButton>
                             </Link>
                             <Typography variant="button">
-                                Lista de Solicitações
+                                Voltar
                             </Typography>
 
                         </div>
-                        <div>
-                            <Typography variant="subtitle1" >
-                                Relatório de Atividades
-                            </Typography>
 
-                        </div>
-                        <div>
+                        <div>                                                        
+                            <Typography variant="button">
+                                Visualizar Progresso
+                            </Typography>
                             <Link to={`${match.url}/progresso`}>
-                                <Button variant="contained" color="primary" >Visualizar Progresso</Button>
+                                <IconButton edge="end" aria-label="visualizar progresso">
+                                    <ArrowForward />
+                                </IconButton>
                             </Link>
                         </div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <Typography variant="subtitle1" style={{ fontWeight: 'bolder', marginBottom: '20px' }}>
+                            Relatório de Atividades
+                        </Typography>
                     </div>
 
                     <div>

@@ -73,7 +73,7 @@ function Header() {
 						color="inherit"
 					>
 						<AccountCircle style={{marginRight: '10px'}}/>
-						<Typography>{user.firstName +" "+ user.lastName}</Typography>
+						<Typography style={{ textTransform: 'initial' }}>Olá, <strong style={{ fontWeight: 'bolder'}}>{user.firstName}</strong></Typography>
 					</Button>
 
 					<Menu
@@ -92,6 +92,7 @@ function Header() {
 						onClose={handleClose}
 					>
 						{/* <MenuItem onClick={handleClose}>Minha Conta</MenuItem> */}
+						<MenuItem>Minha Conta</MenuItem>
 						<MenuItem onClick={handleLogout}>Sair</MenuItem>
 					</Menu>
 				</div>

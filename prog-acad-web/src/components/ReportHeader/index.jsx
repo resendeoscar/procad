@@ -25,7 +25,7 @@ const Comission = ({ list }) => {
 export default function ReportHeader() {
 
     const [state, dispatch] = useContext(GlobalStateContext);
-    
+
     const getTotal = () => {
         return state.report.allActivities.reduce((soma, next) => {
             soma += Number(next.points);
@@ -43,7 +43,7 @@ export default function ReportHeader() {
     const getRole = () => {
 
         let role = state.common.roles.filter(r => r.id === ((state.formulary.data || {}).dbFormulary || {}).roleId);
-        
+
         let name = 'N/A';
 
         if (!!role.length) {
@@ -81,15 +81,17 @@ export default function ReportHeader() {
                     <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px' }}>
                         Interstício: <span className="fnt-color-black fnt-normal">{`${new Date(((state.formulary.data || {}).dbFormulary || {}).from).toLocaleDateString()} a ${new Date(((state.formulary.data || {}).dbFormulary || {}).to).toLocaleDateString()}`}</span>
                     </Typography>
-                    <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px' }}>
-                        Perfil: <span className="fnt-color-black">{getRole()}</span>
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px' }}>
-                        Classe: <span className="fnt-color-black">{getLevel()}</span>
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px', marginBottom: '15px' }}>
-                        Nível: <span className="fnt-color-black">{((state.formulary.data || {}).dbFormulary || {}).classId || "N/A"}</span>
-                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                        <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px', marginRight: '10px'}}>
+                            Perfil: <span className="fnt-color-black">{getRole()}</span>
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px', marginRight: '10px' }}>
+                            Classe: <span className="fnt-color-black">{getLevel()}</span>
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary" className="fnt-normal" style={{ marginTop: '10px', marginBottom: '15px' }}>
+                            Nível: <span className="fnt-color-black">{((state.formulary.data || {}).dbFormulary || {}).classId || "N/A"}</span>
+                        </Typography>
+                    </div>
                 </div>
                 <div style={{ marginLeft: '20px' }}>
                     <div style={{ display: 'flex' }}>

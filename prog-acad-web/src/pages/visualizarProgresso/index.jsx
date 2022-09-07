@@ -113,11 +113,11 @@ const VisualizarProgresso = () => {
 		const zip = new JSZip();
 
 		zip.file("Comprovantes.pdf", merger.saveAsBlob());
-		
-		zip.generateAsync({ type: "blob" }).then(function (content) {			
+
+		zip.generateAsync({ type: "blob" }).then(function (content) {
 			saveAs(content, `Comprovantes_${Math.floor(Date.now() * Math.random()).toString(36)}`);
 		});
-		
+
 	}
 
 	return (
@@ -131,23 +131,27 @@ const VisualizarProgresso = () => {
 						<ArrowBack />
 					</IconButton>
 					<Typography variant="button">
-						Relatório de Atividades
+						Voltar
 					</Typography>
-
-				</div>
-				<div>
-					<Typography variant="subtitle1" >
-						Progresso
-					</Typography>
-
 				</div>
 			</div>
-
+			<div style={{ textAlign: 'center' }}>
+				<Typography variant="subtitle1" style={{ fontWeight: 'bolder', marginBottom: '20px' }}>
+					Progresso
+				</Typography>
+			</div>
 			<div>
 				<ReportHeader />
 				<div style={{ maxHeight: 450 }}>
-					<ProgressTable list={state.report.allActivities} onDeleteClick={handleDeleteClick} />
-
+					{state.report.allActivities.length ?
+						<ProgressTable list={state.report.allActivities} onDeleteClick={handleDeleteClick} />
+						:
+						<div>
+							<div style={{ textAlign: 'center', marginTop: '30px', marginBottom: '40px', border: '1px dashed #ddd', borderColor: '#ddd', borderRadius: '8px', padding: '15px' }}>
+								<Typography variant="body1" color="textSecondary">Nenhuma atividade realizada.</Typography>
+							</div>
+						</div>
+					}
 				</div>
 
 			</div>
