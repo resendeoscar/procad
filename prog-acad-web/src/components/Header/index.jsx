@@ -51,6 +51,11 @@ function Header() {
 		});
 	}
 
+	const handleMinhaConta = () => {
+		setAnchorEl(null);			
+		history.push("/minha-conta");		
+	}
+
 	
 
 	return (
@@ -92,7 +97,7 @@ function Header() {
 						onClose={handleClose}
 					>
 						{/* <MenuItem onClick={handleClose}>Minha Conta</MenuItem> */}
-						<MenuItem>Minha Conta</MenuItem>
+						<MenuItem onClick={handleMinhaConta}>Minha Conta</MenuItem>
 						<MenuItem onClick={handleLogout}>Sair</MenuItem>
 					</Menu>
 				</div>

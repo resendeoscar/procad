@@ -11,7 +11,8 @@ export const ActionsTypes = {
     LOADING:'loading/auth',
     SIGNIN:'signin/auth',
     LOGOUT:'logout/auth',
-    CLEAR_ALL:'remove/notes'
+    CLEAR_ALL:'remove/notes',
+    GET_USER: 'get/user',
 }
 
 export const authReducer = reducerSelector(auth, {
@@ -35,6 +36,13 @@ export const authReducer = reducerSelector(auth, {
             user: null
         }
         return dto
+    },
+    [ActionsTypes.GET_USER](state, action) {
+        const dto = {
+            ...state,
+            user: action.payload
+        }
+        return dto;
     }
 })
 
@@ -42,6 +50,7 @@ export const authReducer = reducerSelector(auth, {
 export const setLoading = (isLoading, dispatch) => dispatch({type: ActionsTypes.LOADING, payload: isLoading});
 export const login = (user, dispatch) => dispatch({type: ActionsTypes.SIGNIN, payload: user})
 export const setLogout = (dispatch) => dispatch({type: ActionsTypes.LOGOUT, payload: null}) 
+export const setUser = (data, dispatch) => dispatch({ type: ActionsTypes.GET_USER, payload: data })
 
 export function fakeSignIn(credentials, dispatch) {
     setLoading(true, dispatch);
@@ -64,10 +73,10 @@ export async function signIn(credentials, dispatch) {
         .then(({data}) => {
             login(data, dispatch);
             localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.userId);
             localStorage.setItem("firstName", data.firstName);
             localStorage.setItem("lastName", data.lastName);
-            localStorage.setItem("siape", data.siape);
-
+            localStorage.setItem("siape", data.siape);            
         }).catch(err => {
             console.log(err);
             throw err;
@@ -98,6 +107,21 @@ export async function signUp(form, dispatch) {
         .finally(r => {
             setLoading(false, dispatch);
         })
+}
+
+export function getUser(userId,dispatch) {
+	setLoading(true, dispatch);    
+	return axios.get(`/user/${userId}`)
+		.then(({data}) => {
+			setUser(data, dispatch);
+			return data
+		})
+		.catch(err => {
+			throw err;
+		})
+		.finally(res => {
+			setLoading(false, dispatch);
+		})
 }
 
 export async function forgotPassword(form, dispatch) {

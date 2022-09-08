@@ -10,6 +10,7 @@ import Dashboard from './pages/dashboard';
 import { ThemeProvider, createTheme } from "@material-ui/core";
 import Store from './store';
 import NovaProgressao from './pages/nova-progressao';
+import VisualizarPerfil from './pages/visualizarPerfil';
 import Header from './components/Header';
 import RelatorioAtividades from './pages/relatorio-atividades';
 import axios from 'axios';
@@ -48,41 +49,42 @@ const theme = createTheme({
 function App() {
   return (
     <Store>
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Switch>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Switch>
 
-          <Route path="/login" component={Auth} />
-          <Route path="/cadastro" component={Auth} />
-          <Route path="/forgotPassword" component={Auth} />
-          <Route path="/resetPassword/:userId" component={Auth} />
+            <Route path="/login" component={Auth} />
+            <Route path="/cadastro" component={Auth} />
+            <Route path="/forgotPassword" component={Auth} />
+            <Route path="/resetPassword/:userId" component={Auth} />
 
-          <PrivateRoute path="/relatorio-de-atividades/:formularyId/relatorio">
-                <GerarRelatorio/>
-          </PrivateRoute>
-          
-          <div>
-            <Header/>
-            
-            <PrivateRoute exact path="/">
-              <Dashboard />
+            <PrivateRoute path="/relatorio-de-atividades/:formularyId/relatorio">
+              <GerarRelatorio />
             </PrivateRoute>
 
-            <PrivateRoute path="/nova-solicitacao">
-              <NovaProgressao/>
-            </PrivateRoute>
+            <div>
+              <Header />
 
-            <PrivateRoute path="/relatorio-de-atividades/:formularyId">
-              <RelatorioAtividades/>
-            </PrivateRoute>
-          </div>
+              <PrivateRoute exact path="/">
+                <Dashboard />
+              </PrivateRoute>
 
-          
+              <PrivateRoute path="/nova-solicitacao">
+                <NovaProgressao />
+              </PrivateRoute>
 
-          {/* <Route path="/" component={Dashboard} /> */}
-        </Switch>
-      </Router>
-    </ThemeProvider>
+              <PrivateRoute path="/minha-conta">
+                <VisualizarPerfil />
+              </PrivateRoute>
+
+              <PrivateRoute path="/relatorio-de-atividades/:formularyId">
+                <RelatorioAtividades />
+              </PrivateRoute>
+            </div>
+                        
+          </Switch>
+        </Router>
+      </ThemeProvider>
     </Store>
   );
 }

@@ -1,3 +1,4 @@
+import { UserRepository } from './../repositories/UserRepository';
 import { Request, Response } from "express";
 import { DuplicatedEntityError, NotFoundError, ValidationError } from "../helpers/apiError";
 import { hashPassword } from "../helpers/auth";
@@ -42,6 +43,31 @@ export async function createUser(req: Request, res: Response) {
   });
 }
 
+export async function getUserInformations(req: Request, res: Response) {
+  const { id: userId } = req.params;
+
+  const dbUser = await req.db.UserRepository.get(userId);
+
+  if (!dbUser) {
+    throw new NotFoundError("Usuário não encontrado")
+  }
+
+  return res.status(200).send({    
+      firstName: dbUser.firstName,
+      lastName: dbUser.lastName,
+      email: dbUser.email,
+      siape: dbUser.siape,
+      birthdate: dbUser.birthdate,
+      civilStatus: dbUser.civilStatus,
+      naturalidade: dbUser.naturalidade,
+      academicDegreeId: dbUser.academicDegreeId,
+      nationalityId: dbUser.nationalityId,
+      careerId: dbUser.careerId,
+      workload: dbUser.workload    
+  });
+}
+
+
 export async function forgotPassword(req: Request, res: Response) {
   const { email }: { email: string; } = req.body;
 
@@ -83,9 +109,9 @@ export async function forgotPassword(req: Request, res: Response) {
 }
 
 
-export async function resetPassword(req: Request, res: Response) {  
+export async function resetPassword(req: Request, res: Response) {
   const { userId, password, rpassword }: { userId: string; password: string; rpassword: string } = req.body;
-    
+
   if (!password || !rpassword || rpassword !== password) {
     throw new NotFoundError("Senhas inválidas");
   }
@@ -107,6 +133,6 @@ export async function resetPassword(req: Request, res: Response) {
   } catch (error) {
     throw new NotFoundError("Ocorreu um erro ao alterar a senha.");
   }
-  
+
 }
 

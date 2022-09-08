@@ -89,8 +89,6 @@ const Activities = () => {
     }
 
     const handleClose = async () => {
-
-
         setAtividadeSelected({});
         setOpenModal(false);
         await getFormulary(params.formularyId, dispatch).catch(console.log);
