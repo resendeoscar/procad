@@ -49,14 +49,12 @@ function Header() {
 		logout(dispatch).then(r => {
 			history.push("/");
 		});
-	}
+	}	
 
 	const handleMinhaConta = () => {
 		setAnchorEl(null);			
 		history.push("/minha-conta");		
-	}
-
-	
+	}	
 
 	return (
 		<AppBar position="static" className={classes.root}>

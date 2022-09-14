@@ -13,6 +13,7 @@ import AtividadeModal from '../../components/AtividadeModal';
 import { getActivities } from '../../store/reducers/report';
 import { GlobalStateContext } from '../../store';
 import { updateFormAnswer, getFormulary } from '../../store/reducers/formulary';
+import { getFields, getActivitiesCompleted } from '../../store/reducers/report';
 import { Snackbar, CircularProgress } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 
@@ -105,7 +106,13 @@ const Activities = () => {
         return !!fieldAnswers.find(atv => atv.activityId === activityId);
     }
 
-    const goBack = () => {
+    const goBack = async () => {
+        let formulary = await getFormulary(params.formularyId, dispatch).catch(console.log);
+        await getFields(dispatch);
+
+        let answers = (formulary || {}).dbFormularyAnswers || [];
+        await getActivitiesCompleted(answers, dispatch)
+
         history.goBack();
     }
 

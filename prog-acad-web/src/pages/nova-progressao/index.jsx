@@ -74,7 +74,7 @@ const NovaProgressao = () => {
 		setOpen(false);
 		setErrorMessage("");
 	};
-	
+
 	const handleCloseSuccess = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
@@ -128,7 +128,7 @@ const NovaProgressao = () => {
 			classId: classId.toString(),
 			comission: []
 		}
-		
+
 		if (primeiroProfessor.value) {
 			dto.comission.push({
 				professorName: primeiroProfessor.value,
@@ -332,6 +332,7 @@ const NovaProgressao = () => {
 									</Typography>
 									<FormControl variant="outlined" fullWidth size="small" style={{ marginBottom: '8px', marginTop: '12px' }}>
 										<Select
+											required
 											id="estadocivil-input"
 											value={classId}
 											fullWidth

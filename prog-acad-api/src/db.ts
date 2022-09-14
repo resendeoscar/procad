@@ -20,12 +20,10 @@ export interface DBUser extends Base {
   civilStatus: CivilStatus;
   email: string;
   firstName: string;
-  lastName: string;
-  //levelId: string;
+  lastName: string;  
   nationalityId: string;
   naturalidade: string | null;
-  password: string;
-  //roleId: string;
+  password: string;  
   siape: string;
   workload: number | null;
 }

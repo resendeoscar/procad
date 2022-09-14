@@ -127,7 +127,11 @@ export async function getFormularyInformations(req: Request, res: Response) {
       "files.content",
     )
     .leftJoin("files", "formularyAnswers.id", "files.formularyAnswerId")
+    .leftJoin("activities", "formularyAnswers.activityId", "activities.id")
+    .leftJoin("fields", "formularyAnswers.fieldId", "fields.id")    
     .where("formularyAnswers.formularyId", dbFormulary.id)
+    .orderBy("fields.campo")
+    .orderBy("activities.atividade");
 
   return res.status(200).send({
     dbFormulary,
@@ -169,6 +173,8 @@ export async function deleteFormulary(req: Request, res: Response) {
   if (dbFormulary.userId !== req.decodedJTW.id) {
     throw new InvalidActionError("You're not authorized to close this formulary.");
   }
+
+  await req.knex("formularyAnswers").delete().where("formularyId", formularyId)
 
   const finishedFormulary = await req.db.FormularyRepository.delete(formularyId);
 

@@ -1,9 +1,11 @@
+import { CivilStatus } from './../types/enums/profile';
 import { UserRepository } from './../repositories/UserRepository';
 import { Request, Response } from "express";
 import { DuplicatedEntityError, NotFoundError, ValidationError } from "../helpers/apiError";
 import { hashPassword } from "../helpers/auth";
-import { UserInput } from "../types";
-import { userValidator } from "../validators";
+import { UserInput, ProfileInput } from "../types";
+import { userValidator, ProfileValidator } from "../validators";
+import { StatusCodes } from "../helpers/statusCode";
 import * as nodemailer from "nodemailer";
 
 
@@ -52,19 +54,69 @@ export async function getUserInformations(req: Request, res: Response) {
     throw new NotFoundError("Usuário não encontrado")
   }
 
-  return res.status(200).send({    
-      firstName: dbUser.firstName,
-      lastName: dbUser.lastName,
-      email: dbUser.email,
-      siape: dbUser.siape,
-      birthdate: dbUser.birthdate,
-      civilStatus: dbUser.civilStatus,
-      naturalidade: dbUser.naturalidade,
-      academicDegreeId: dbUser.academicDegreeId,
-      nationalityId: dbUser.nationalityId,
-      careerId: dbUser.careerId,
-      workload: dbUser.workload    
+  return res.status(200).send({
+    firstName: dbUser.firstName,
+    lastName: dbUser.lastName,
+    email: dbUser.email,
+    siape: dbUser.siape,
+    birthdate: dbUser.birthdate,
+    civilStatus: dbUser.civilStatus,
+    naturalidade: dbUser.naturalidade,
+    academicDegreeId: dbUser.academicDegreeId,
+    nationalityId: dbUser.nationalityId,
+    careerId: dbUser.careerId,
+    workload: dbUser.workload
   });
+}
+
+export async function updateUser(req: Request, res: Response) {
+  const profileInput: ProfileInput = req.body;
+
+  const { error } = ProfileValidator.validate(profileInput);
+
+  if (error) {
+    throw new ValidationError(error.message);
+  }
+
+  const dbCareer = await req.db.CareerRepository.get(profileInput.careerId);
+  const dbAcademicDegree = await req.db.AcademicDegreeRepository.get(profileInput.academicDegreeId);
+  const dbNationality = await req.db.CountryRepository.get(profileInput.nationalityId);
+
+  if (!dbCareer || !dbAcademicDegree || !dbNationality) {
+    throw new NotFoundError(`Some career, role, level, academicDegree or nationality was wronged informed.`);
+  }
+
+  const dbUser = await req.db.UserRepository.findOneBy({ id: profileInput.id });
+
+  if (!dbUser) {
+    throw new DuplicatedEntityError("User not found.");
+  }
+
+  try {
+
+    const dbUpdatedUser = await req.db.UserRepository.update({
+      id: dbUser.id,
+      firstName: profileInput.firstName,
+      lastName: profileInput.lastName,
+      siape: profileInput.siape,
+      birthdate: profileInput.birthdate,
+      workload: profileInput.workload,
+      naturalidade: profileInput.naturalidade,
+      civilStatus: profileInput.civilStatus,
+      careerId: profileInput.careerId,      
+      academicDegreeId: profileInput.academicDegreeId,
+      nationalityId: profileInput.nationalityId
+    });
+
+    return res.status(StatusCodes.OKAY).send({            
+      siape: dbUpdatedUser.siape,
+      firstName: dbUpdatedUser.firstName,
+      lastName: dbUpdatedUser.lastName      
+    });
+
+  } catch (error) {
+    throw new NotFoundError("Ocorreu um erro ao alterar os dados cadastrais.");
+  }
 }
 
 
